@@ -467,7 +467,7 @@ export const musicPlayerConfig: MusicPlayerConfig = {
 	enable: true, // 启用音乐播放器功能
 	showFloatingPlayer: true, // 显示悬浮播放器 UI
 	floatingEntryMode: "fab", // 悬浮入口模式："default" 为独立悬浮播放器，"fab" 为集成到通用 FAB 组
-	mode: "local", // 音乐播放器模式，可选 "local" 或 "meting"
+	mode: "meting", // 音乐播放器模式，可选 "local" 或 "meting"
 	meting_api:
 		"https://meting.mysqil.com/api?server=:server&type=:type&id=:id&auth=:auth&r=:r", // Meting API 地址
 	id: "17511198277", // 歌单ID
@@ -620,7 +620,7 @@ export const sidebarLayoutConfig: SidebarLayoutConfig = {
 export const sakuraConfig: SakuraConfig = {
 	enable: true, // 默认关闭樱花特效
 	sakuraNum: 30, // 樱花数量
-	limitTimes: -1, // 樱花越界限制次数，-1为无限循环
+	limitTimes: 10, // 樱花越界限制次数，-1为无限循环
 	size: {
 		min: 0.5, // 樱花最小尺寸倍数
 		max: 1.1, // 樱花最大尺寸倍数
