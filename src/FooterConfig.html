@@ -40,3 +40,154 @@
 		>点我一下会发生什么呢？<br />大概是什么也不会发生吧……如果有人点的话……清祝愿我梦想成真、谢谢你。</a
 	>
 </p>
+<!-- 彩蛋按钮 -->
+<div id="mizuki-easter-egg">✨</div>
+
+<!-- 弹窗 -->
+<div id="mizuki-modal">
+	<div class="mizuki-modal-content">
+		<span id="mizuki-close">&times;</span>
+
+		<h2>神秘彩蛋</h2>
+
+		<button id="luck-btn">今日人品</button>
+		<p id="luck-result"></p>
+
+		<a href="https://example.com" target="_blank">
+			<button>进入网站A</button>
+		</a>
+
+		<a href="https://example.org" target="_blank">
+			<button>进入网站B</button>
+		</a>
+	</div>
+</div>
+
+<style>
+	/* 彩蛋按钮 */
+	#mizuki-easter-egg {
+		position: fixed;
+		bottom: 20px;
+		right: 20px;
+		font-size: 24px;
+		cursor: pointer;
+		z-index: 9999;
+		user-select: none;
+		transition: transform 0.2s;
+	}
+
+	#mizuki-easter-egg:hover {
+		transform: scale(1.2);
+	}
+
+	/* 背景遮罩 */
+	#mizuki-modal {
+		display: none;
+		position: fixed;
+		z-index: 10000;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background: rgba(0, 0, 0, 0.5);
+	}
+
+	/* 弹窗主体 */
+	.mizuki-modal-content {
+		background: white;
+		width: 320px;
+		padding: 24px;
+		border-radius: 16px;
+		margin: 10% auto;
+		text-align: center;
+		position: relative;
+		animation: popup 0.25s ease;
+	}
+
+	/* 深色模式适配 */
+	html.dark .mizuki-modal-content {
+		background: #222;
+		color: white;
+	}
+
+	@keyframes popup {
+		from {
+			transform: scale(0.8);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+
+	#mizuki-close {
+		position: absolute;
+		right: 16px;
+		top: 10px;
+		font-size: 24px;
+		cursor: pointer;
+	}
+
+	.mizuki-modal-content button {
+		margin-top: 12px;
+		width: 100%;
+		padding: 10px;
+		border: none;
+		border-radius: 10px;
+		cursor: pointer;
+		background: #7aa2ff;
+		color: white;
+		font-size: 16px;
+		transition: 0.2s;
+	}
+
+	.mizuki-modal-content button:hover {
+		opacity: 0.85;
+	}
+
+	#luck-result {
+		margin-top: 10px;
+		font-size: 18px;
+	}
+</style>
+
+<script>
+	const egg = document.getElementById("mizuki-easter-egg");
+	const modal = document.getElementById("mizuki-modal");
+	const closeBtn = document.getElementById("mizuki-close");
+
+	egg.onclick = () => {
+		modal.style.display = "block";
+	};
+
+	closeBtn.onclick = () => {
+		modal.style.display = "none";
+	};
+
+	window.onclick = (e) => {
+		if (e.target === modal) {
+			modal.style.display = "none";
+		}
+	};
+
+	/* 今日人品 */
+	document.getElementById("luck-btn").onclick = () => {
+		const luck = Math.floor(Math.random() * 101);
+
+		let comment = "";
+
+		if (luck >= 90) {
+			comment = "天选之人！";
+		} else if (luck >= 70) {
+			comment = "运气不错~";
+		} else if (luck >= 40) {
+			comment = "普普通通";
+		} else {
+			comment = "建议今天早点睡";
+		}
+
+		document.getElementById("luck-result").innerHTML =
+			`今日人品：${luck}<br>${comment}`;
+	};
+</script>
