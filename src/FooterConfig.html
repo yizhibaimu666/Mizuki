@@ -1,151 +1,568 @@
-<!-- 彩蛋按钮 -->
-<div id="mizuki-easter-egg">✨</div>
+<footer
+	style="color: #ff4da6; text-align: center; padding: 10px 0; font-size: 14px"
+>
+	<!-- 版权信息（自动年份） -->
+	&copy;<span id="year"></span> baimu
+</footer>
 
-<!-- 弹窗 -->
-<div id="mizuki-modal">
-	<div class="mizuki-modal-content">
-		<span id="mizuki-close">&times;</span>
+<script>
+	document.getElementById("year").textContent = new Date().getFullYear();
+</script>
+<style>
+	footer a:hover {
+		color: #e60073;
+	}
+</style>
 
-		<h2>神秘彩蛋</h2>
+<!-- =========================
+     Mizuki Easter Egg System
+     Full Version
+========================= -->
 
-		<button id="luck-btn">今日人品</button>
-		<p id="luck-result"></p>
+<!-- 彩蛋触发文字 -->
+<div id="mzk-easter-trigger">点我一下会发生什么呢？</div>
 
-		<a href="https://example.com" target="_blank">
-			<button>进入网站A</button>
-		</a>
+<!-- 全屏遮罩 -->
+<div id="mzk-overlay"></div>
 
-		<a href="https://example.org" target="_blank">
-			<button>进入网站B</button>
-		</a>
+<!-- =========================
+     一级主弹窗
+========================= -->
+
+<div class="mzk-modal" id="mzk-main-modal">
+	<div class="mzk-box">
+		<span class="mzk-close">&times;</span>
+
+		<h1>主标题</h1>
+
+		<p>大概什么也不会发生吧……</p>
+
+		<div class="mzk-btn-group">
+			<button onclick="openLuck()">今日人品</button>
+
+			<button onclick="openSurprise()">惊喜</button>
+
+			<button onclick="openNothing()">这里什么都没有</button>
+		</div>
 	</div>
 </div>
 
+<!-- =========================
+     今日人品
+========================= -->
+
+<div class="mzk-modal" id="luck-modal">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>今日人品</h2>
+
+		<div id="luck-number">?</div>
+
+		<button onclick="generateLuck()">测试今日运气</button>
+	</div>
+</div>
+
+<!-- =========================
+     惊喜视频
+========================= -->
+
+<div class="mzk-modal" id="surprise-modal">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>惊喜</h2>
+
+		<p>再点一次试试</p>
+
+		<video
+			id="secret-video"
+			controls
+			playsinline
+			style="
+				width: 100%;
+				border-radius: 16px;
+				margin-top: 20px;
+				display: none;
+			"
+		>
+			<source
+				src="/video/【4K珍藏】诈骗神曲《Never Gonna Give You Up》.mp4"
+				type="video/mp4"
+			/>
+		</video>
+
+		<button onclick="playSecretVideo()">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 1
+========================= -->
+
+<div class="mzk-modal" id="nested-1">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>这里真的什么都没有</h2>
+
+		<button onclick="openNested(2)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 2
+========================= -->
+
+<div class="mzk-modal" id="nested-2">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>你怎么还在点</h2>
+
+		<button onclick="openNested(3)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 3
+========================= -->
+
+<div class="mzk-modal" id="nested-3">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>真的没有东西</h2>
+
+		<button onclick="openNested(4)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 4
+========================= -->
+
+<div class="mzk-modal" id="nested-4">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>你怎么不信我呢</h2>
+
+		<button onclick="openNested(5)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 5
+========================= -->
+
+<div class="mzk-modal" id="nested-5">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>好吧你赢了</h2>
+
+		<p>这是最后的秘密。</p>
+
+		<button
+			onclick="
+				window.open(
+					'https://autopatchcn.yuanshen.com/client_app/download/launcher/20260408105501_5dtAxqBbnzysRlMJ/pcbackup319/yuanshen_setup_20260408.exe',
+				)
+			"
+		>
+			惊喜
+		</button>
+	</div>
+</div>
+
+<!-- =========================
+     CSS
+========================= -->
+
 <style>
-	/* 彩蛋按钮 */
-	#mizuki-easter-egg {
-		position: fixed;
-		bottom: 20px;
-		right: 20px;
-		font-size: 24px;
-		cursor: pointer;
-		z-index: 9999;
-		user-select: none;
-		transition: transform 0.2s;
-	}
+	/* ===== 触发文字 ===== */
 
-	#mizuki-easter-egg:hover {
-		transform: scale(1.2);
-	}
+	#mzk-easter-trigger {
+		margin-top: 12px;
 
-	/* 背景遮罩 */
-	#mizuki-modal {
-		display: none;
-		position: fixed;
-		z-index: 10000;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		background: rgba(0, 0, 0, 0.5);
-	}
-
-	/* 弹窗主体 */
-	.mizuki-modal-content {
-		background: white;
-		width: 320px;
-		padding: 24px;
-		border-radius: 16px;
-		margin: 10% auto;
 		text-align: center;
+
+		color: #ff69b4;
+
+		font-size: 18px;
+
+		cursor: pointer;
+
+		transition: 0.25s;
+
+		user-select: none;
+
 		position: relative;
-		animation: popup 0.25s ease;
+
+		z-index: 10;
 	}
 
-	/* 深色模式适配 */
-	html.dark .mizuki-modal-content {
-		background: #222;
-		color: white;
+	#mzk-easter-trigger:hover {
+		transform: scale(1.05);
+
+		opacity: 0.8;
 	}
+
+	/* ===== 全屏遮罩 ===== */
+
+	#mzk-overlay {
+		position: fixed;
+
+		inset: 0;
+
+		background: rgba(0, 0, 0, 0.45);
+
+		backdrop-filter: blur(4px);
+
+		z-index: 99998;
+
+		opacity: 0;
+
+		pointer-events: none;
+
+		transition: 0.25s;
+	}
+
+	#mzk-overlay.show {
+		opacity: 1;
+
+		pointer-events: auto;
+	}
+
+	/* ===== 弹窗 ===== */
+
+	.mzk-modal {
+		position: fixed;
+
+		inset: 0;
+
+		display: flex;
+
+		justify-content: center;
+
+		align-items: center;
+
+		z-index: 99999;
+
+		opacity: 0;
+
+		pointer-events: none;
+
+		transition: 0.25s;
+
+		padding: 20px;
+	}
+
+	.mzk-modal.show {
+		opacity: 1;
+
+		pointer-events: auto;
+	}
+
+	/* ===== 弹窗主体 ===== */
+
+	.mzk-box {
+		width: min(820px, 92vw);
+
+		min-height: 420px;
+
+		background: #f4e3f2;
+
+		border-radius: 24px;
+
+		padding: 36px;
+
+		position: relative;
+
+		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+
+		animation: popup 0.25s ease;
+
+		overflow: hidden;
+	}
+
+	.mzk-box.small {
+		width: min(480px, 90vw);
+
+		min-height: auto;
+	}
+
+	/* ===== 动画 ===== */
 
 	@keyframes popup {
 		from {
-			transform: scale(0.8);
+			transform: scale(0.9);
+
 			opacity: 0;
 		}
+
 		to {
 			transform: scale(1);
+
 			opacity: 1;
 		}
 	}
 
-	#mizuki-close {
-		position: absolute;
-		right: 16px;
-		top: 10px;
-		font-size: 24px;
-		cursor: pointer;
+	/* ===== 标题 ===== */
+
+	.mzk-box h1 {
+		font-size: clamp(34px, 5vw, 58px);
+
+		margin-bottom: 10px;
 	}
 
-	.mizuki-modal-content button {
-		margin-top: 12px;
-		width: 100%;
-		padding: 10px;
-		border: none;
-		border-radius: 10px;
+	.mzk-box h2 {
+		font-size: clamp(28px, 4vw, 40px);
+
+		margin-bottom: 18px;
+	}
+
+	.mzk-box p {
+		font-size: 18px;
+	}
+
+	/* ===== 关闭按钮 ===== */
+
+	.mzk-close {
+		position: absolute;
+
+		top: 18px;
+
+		right: 22px;
+
+		font-size: 36px;
+
 		cursor: pointer;
-		background: #7aa2ff;
-		color: white;
-		font-size: 16px;
+
 		transition: 0.2s;
 	}
 
-	.mizuki-modal-content button:hover {
+	.mzk-close:hover {
+		transform: rotate(90deg);
+	}
+
+	/* ===== 主按钮区域 ===== */
+
+	.mzk-btn-group {
+		margin-top: 220px;
+
+		display: flex;
+
+		flex-direction: row;
+
+		justify-content: center;
+
+		align-items: center;
+
+		gap: 24px;
+
+		flex-wrap: nowrap;
+	}
+
+	/* ===== 按钮 ===== */
+
+	.mzk-btn-group button,
+	.mzk-box button {
+		flex: 1;
+
+		min-width: 0;
+
+		border: none;
+
+		background: #e7a2eb;
+
+		color: white;
+
+		border-radius: 18px;
+
+		padding: 16px 20px;
+
+		font-size: clamp(16px, 2vw, 28px);
+
+		cursor: pointer;
+
+		transition: 0.2s;
+	}
+
+	.mzk-btn-group button:hover,
+	.mzk-box button:hover {
+		transform: scale(1.04);
+
 		opacity: 0.85;
 	}
 
-	#luck-result {
-		margin-top: 10px;
-		font-size: 18px;
+	/* ===== 人品数字 ===== */
+
+	#luck-number {
+		font-size: 72px;
+
+		margin: 24px 0;
+
+		color: hotpink;
+
+		text-align: center;
+	}
+
+	/* ===== 深色模式 ===== */
+
+	html.dark .mzk-box {
+		background: #2a2430;
+
+		color: white;
+	}
+
+	/* ===== 移动端 ===== */
+
+	@media (max-width: 768px) {
+		.mzk-box {
+			padding: 24px;
+
+			min-height: auto;
+		}
+
+		.mzk-btn-group {
+			margin-top: 40px;
+
+			gap: 10px;
+		}
+
+		.mzk-btn-group button,
+		.mzk-box button {
+			font-size: 14px;
+
+			padding: 12px 8px;
+		}
+
+		#luck-number {
+			font-size: 52px;
+		}
+
+		#mzk-easter-trigger {
+			font-size: 15px;
+
+			padding: 0 10px;
+		}
 	}
 </style>
 
+<!-- =========================
+     JS
+========================= -->
+
 <script>
-	const egg = document.getElementById("mizuki-easter-egg");
-	const modal = document.getElementById("mizuki-modal");
-	const closeBtn = document.getElementById("mizuki-close");
+	const overlay = document.getElementById("mzk-overlay");
 
-	egg.onclick = () => {
-		modal.style.display = "block";
-	};
+	const allModals = document.querySelectorAll(".mzk-modal");
 
-	closeBtn.onclick = () => {
-		modal.style.display = "none";
-	};
+	/* ===== 只显示一个弹窗 ===== */
 
-	window.onclick = (e) => {
-		if (e.target === modal) {
-			modal.style.display = "none";
+	function showOnly(id) {
+		allModals.forEach((modal) => {
+			modal.classList.remove("show");
+		});
+
+		overlay.classList.add("show");
+
+		document.getElementById(id).classList.add("show");
+
+		document.body.style.overflow = "hidden";
+	}
+
+	/* ===== 关闭全部 ===== */
+
+	function closeAllModals() {
+		allModals.forEach((modal) => {
+			modal.classList.remove("show");
+		});
+
+		overlay.classList.remove("show");
+
+		document.body.style.overflow = "";
+
+		const video = document.getElementById("secret-video");
+
+		if (video) {
+			video.pause();
+
+			video.currentTime = 0;
+
+			video.style.display = "none";
 		}
+	}
+
+	/* ===== 打开主弹窗 ===== */
+
+	document.getElementById("mzk-easter-trigger").onclick = () => {
+		showOnly("mzk-main-modal");
 	};
 
-	/* 今日人品 */
-	document.getElementById("luck-btn").onclick = () => {
-		const luck = Math.floor(Math.random() * 101);
+	/* ===== 关闭按钮 ===== */
 
-		let comment = "";
+	document.querySelectorAll(".mzk-close").forEach((btn) => {
+		btn.onclick = closeAllModals;
+	});
 
-		if (luck >= 90) {
-			comment = "天选之人！";
-		} else if (luck >= 70) {
-			comment = "运气不错~";
-		} else if (luck >= 40) {
-			comment = "普普通通";
+	/* ===== 点击遮罩关闭 ===== */
+
+	overlay.onclick = closeAllModals;
+
+	/* ===== 今日人品 ===== */
+
+	function openLuck() {
+		showOnly("luck-modal");
+	}
+
+	function generateLuck() {
+		const num = Math.floor(Math.random() * 101);
+
+		let text = "";
+
+		if (num >= 90) {
+			text = "欧皇降临";
+		} else if (num >= 70) {
+			text = "运气不错";
+		} else if (num >= 40) {
+			text = "一般般";
 		} else {
-			comment = "建议今天早点睡";
+			text = "今天不宜抽卡";
 		}
 
-		document.getElementById("luck-result").innerHTML =
-			`今日人品：${luck}<br>${comment}`;
-	};
+		document.getElementById("luck-number").innerHTML = `${num}
+    <div style="
+      font-size:24px;
+      margin-top:10px;
+    ">
+      ${text}
+    </div>`;
+	}
+
+	/* ===== 惊喜 ===== */
+
+	function openSurprise() {
+		showOnly("surprise-modal");
+	}
+
+	function playSecretVideo() {
+		const video = document.getElementById("secret-video");
+
+		video.style.display = "block";
+
+		video.play();
+	}
+
+	/* ===== 套娃 ===== */
+
+	function openNothing() {
+		showOnly("nested-1");
+	}
+
+	function openNested(level) {
+		showOnly(`nested-${level}`);
+	}
 </script>
