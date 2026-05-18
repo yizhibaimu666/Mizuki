@@ -33,9 +33,9 @@
 	<div class="mzk-box">
 		<span class="mzk-close">&times;</span>
 
-		<h1>主标题</h1>
+		<h1>恭喜你发现了彩蛋</h1>
 
-		<p>大概什么也不会发生吧……</p>
+		<p>看看有什么吧</p>
 
 		<div class="mzk-btn-group">
 			<button onclick="openLuck()">今日人品</button>
@@ -75,24 +75,7 @@
 
 		<p>再点一次试试</p>
 
-		<video
-			id="secret-video"
-			controls
-			playsinline
-			style="
-				width: 100%;
-				border-radius: 16px;
-				margin-top: 20px;
-				display: none;
-			"
-		>
-			<source
-				src="/video/【4K珍藏】诈骗神曲《Never Gonna Give You Up》.mp4"
-				type="video/mp4"
-			/>
-		</video>
-
-		<button onclick="playSecretVideo()">再点一次</button>
+		<button onclick="openVideoPage()">再点一次</button>
 	</div>
 </div>
 
@@ -184,13 +167,13 @@
 	/* ===== 触发文字 ===== */
 
 	#mzk-easter-trigger {
-		margin-top: 12px;
+		margin-top: 10px;
 
 		text-align: center;
 
 		color: #ff69b4;
 
-		font-size: 18px;
+		font-size: 14px;
 
 		cursor: pointer;
 
@@ -214,19 +197,25 @@
 	#mzk-overlay {
 		position: fixed;
 
-		inset: 0;
+		top: 0;
+		left: 0;
 
-		background: rgba(0, 0, 0, 0.45);
+		width: 100vw;
+		height: 100vh;
 
-		backdrop-filter: blur(4px);
+		background: rgba(0, 0, 0, 0.72);
 
-		z-index: 99998;
+		backdrop-filter: blur(8px);
+
+		-webkit-backdrop-filter: blur(8px);
+
+		z-index: 2147483646;
 
 		opacity: 0;
 
 		pointer-events: none;
 
-		transition: 0.25s;
+		transition: opacity 0.25s ease;
 	}
 
 	#mzk-overlay.show {
@@ -248,15 +237,15 @@
 
 		align-items: center;
 
-		z-index: 99999;
+		z-index: 2147483647;
 
 		opacity: 0;
 
 		pointer-events: none;
 
-		transition: 0.25s;
+		transition: opacity 0.25s ease;
 
-		padding: 20px;
+		padding: 24px;
 	}
 
 	.mzk-modal.show {
@@ -267,32 +256,33 @@
 
 	/* ===== 弹窗主体 ===== */
 
-	.mzk-box {
-		width: min(820px, 92vw);
+	.mzk-modal {
+		position: fixed;
 
-		min-height: 420px;
+		inset: 0;
 
-		background: #f4e3f2;
+		display: flex;
 
-		border-radius: 24px;
+		justify-content: center;
 
-		padding: 36px;
+		align-items: center;
 
-		position: relative;
+		z-index: 2147483647;
 
-		box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+		opacity: 0;
 
-		animation: popup 0.25s ease;
+		pointer-events: none;
 
-		overflow: hidden;
+		transition: opacity 0.25s ease;
+
+		padding: 24px;
 	}
 
-	.mzk-box.small {
-		width: min(480px, 90vw);
+	.mzk-modal.show {
+		opacity: 1;
 
-		min-height: auto;
+		pointer-events: auto;
 	}
-
 	/* ===== 动画 ===== */
 
 	@keyframes popup {
@@ -350,19 +340,15 @@
 	/* ===== 主按钮区域 ===== */
 
 	.mzk-btn-group {
-		margin-top: 220px;
+		position: absolute;
+
+		left: 42px;
+		right: 42px;
+		bottom: 38px;
 
 		display: flex;
 
-		flex-direction: row;
-
-		justify-content: center;
-
-		align-items: center;
-
 		gap: 24px;
-
-		flex-wrap: nowrap;
 	}
 
 	/* ===== 按钮 ===== */
@@ -371,7 +357,9 @@
 	.mzk-box button {
 		flex: 1;
 
-		min-width: 0;
+		min-width: 220px;
+
+		white-space: nowrap;
 
 		border: none;
 
@@ -381,15 +369,16 @@
 
 		border-radius: 18px;
 
-		padding: 16px 20px;
+		padding: 18px 24px;
 
-		font-size: clamp(16px, 2vw, 28px);
+		font-size: clamp(16px, 1.3vw, 26px);
 
 		cursor: pointer;
 
 		transition: 0.2s;
-	}
 
+		font-weight: 600;
+	}
 	.mzk-btn-group button:hover,
 	.mzk-box button:hover {
 		transform: scale(1.04);
@@ -421,33 +410,57 @@
 
 	@media (max-width: 768px) {
 		.mzk-box {
-			padding: 24px;
+			width: 94vw;
 
-			min-height: auto;
+			height: auto;
+
+			min-height: 360px;
+
+			padding: 24px;
+		}
+
+		.mzk-box.small {
+			width: 94vw;
+
+			min-height: 260px;
 		}
 
 		.mzk-btn-group {
-			margin-top: 40px;
+			left: 24px;
+			right: 24px;
+			bottom: 24px;
 
 			gap: 10px;
 		}
 
-		.mzk-btn-group button,
-		.mzk-box button {
-			font-size: 14px;
+		.mzk-btn-group button {
+			min-width: 0;
 
-			padding: 12px 8px;
+			font-size: 13px;
+
+			padding: 14px 8px;
+		}
+
+		.mzk-box h1 {
+			font-size: 34px;
+		}
+
+		.mzk-box h2 {
+			font-size: 26px;
 		}
 
 		#luck-number {
-			font-size: 52px;
+			font-size: 54px;
 		}
 
 		#mzk-easter-trigger {
 			font-size: 15px;
-
-			padding: 0 10px;
 		}
+	}
+	.mzk-modal,
+	.mzk-modal * {
+		font-family:
+			var(--global-font), var(--font-main), sans-serif !important;
 	}
 </style>
 
@@ -484,16 +497,6 @@
 		overlay.classList.remove("show");
 
 		document.body.style.overflow = "";
-
-		const video = document.getElementById("secret-video");
-
-		if (video) {
-			video.pause();
-
-			video.currentTime = 0;
-
-			video.style.display = "none";
-		}
 	}
 
 	/* ===== 打开主弹窗 ===== */
@@ -548,12 +551,11 @@
 		showOnly("surprise-modal");
 	}
 
-	function playSecretVideo() {
-		const video = document.getElementById("secret-video");
-
-		video.style.display = "block";
-
-		video.play();
+	function openVideoPage() {
+		window.open(
+			"/video/【4K珍藏】诈骗神曲《Never Gonna Give You Up》.mp4",
+			"_blank",
+		);
 	}
 
 	/* ===== 套娃 ===== */
