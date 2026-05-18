@@ -256,7 +256,7 @@
 	.mzk-box {
 		width: min(920px, 92vw);
 
-		height: min(520px, 78vh);
+		min-height: 520px;
 
 		background: #f4e3f2;
 
@@ -271,6 +271,12 @@
 		box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
 
 		animation: popup 0.22s ease;
+
+		display: flex;
+
+		flex-direction: column;
+
+		justify-content: center;
 	}
 
 	/* 小弹窗 */
@@ -301,9 +307,11 @@
 	/* ===== 标题 ===== */
 
 	.mzk-box h1 {
-		font-size: clamp(28px, 4vw, 52px);
+		font-size: clamp(26px, 3vw, 44px);
 
-		margin-bottom: 10px;
+		margin-bottom: 12px;
+
+		line-height: 1.2;
 	}
 
 	.mzk-box h2 {
@@ -339,15 +347,13 @@
 	/* ===== 主按钮区域 ===== */
 
 	.mzk-btn-group {
-		position: absolute;
-
-		left: 42px;
-		right: 42px;
-		bottom: 38px;
+		margin-top: auto;
 
 		display: flex;
 
-		gap: 24px;
+		gap: 20px;
+
+		width: 100%;
 	}
 
 	/* ===== 按钮 ===== */
@@ -356,7 +362,7 @@
 	.mzk-box button {
 		flex: 1;
 
-		min-width: 220px;
+		min-width: 0;
 
 		white-space: nowrap;
 
@@ -368,9 +374,9 @@
 
 		border-radius: 18px;
 
-		padding: 18px 24px;
+		padding: 16px 20px;
 
-		font-size: clamp(16px, 1.3vw, 26px);
+		font-size: clamp(14px, 1vw, 22px);
 
 		cursor: pointer;
 
@@ -425,9 +431,7 @@
 		}
 
 		.mzk-btn-group {
-			left: 24px;
-			right: 24px;
-			bottom: 24px;
+			margin-top: 40px;
 
 			gap: 10px;
 		}
