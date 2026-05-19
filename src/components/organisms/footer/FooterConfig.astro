@@ -1,0 +1,513 @@
+---
+// Mizuki Easter Egg System Component
+// Extracted from FooterConfig.html
+---
+
+<footer>
+	<!-- 版权信息（自动年份） -->
+	&copy;<span id="year"></span> baimu
+</footer>
+
+<!-- 彩蛋触发文字 -->
+<div id="mzk-easter-trigger">点我一下会发生什么呢？</div>
+
+<!-- 全屏遮罩 -->
+<div id="mzk-overlay"></div>
+
+<!-- =========================
+     一级主弹窗
+========================= -->
+
+<div class="mzk-modal" id="mzk-main-modal">
+	<div class="mzk-box">
+		<span class="mzk-close">&times;</span>
+
+		<h1>恭喜你发现了彩蛋</h1>
+
+		<p>看看有什么吧</p>
+
+		<div class="mzk-btn-group">
+			<button onclick="openLuck()">今日人品</button>
+
+			<button onclick="openSurprise()">惊喜</button>
+
+			<button onclick="openNothing()">这里什么都没有</button>
+		</div>
+	</div>
+</div>
+
+<!-- =========================
+     今日人品
+========================= -->
+
+<div class="mzk-modal" id="luck-modal">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>今日人品</h2>
+
+		<div id="luck-number">?</div>
+
+		<button onclick="generateLuck()">测试今日运气</button>
+	</div>
+</div>
+
+<!-- =========================
+     惊喜视频
+========================= -->
+
+<div class="mzk-modal" id="surprise-modal">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>惊喜</h2>
+
+		<p>再点一次试试</p>
+
+		<button onclick="openVideoPage()">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 1
+========================= -->
+
+<div class="mzk-modal" id="nested-1">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>这里真的什么都没有</h2>
+
+		<button onclick="openNested(2)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 2
+========================= -->
+
+<div class="mzk-modal" id="nested-2">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>你怎么还在点</h2>
+
+		<button onclick="openNested(3)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 3
+========================= -->
+
+<div class="mzk-modal" id="nested-3">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>真的没有东西</h2>
+
+		<button onclick="openNested(4)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 4
+========================= -->
+
+<div class="mzk-modal" id="nested-4">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>你怎么不信我呢</h2>
+
+		<button onclick="openNested(5)">再点一次</button>
+	</div>
+</div>
+
+<!-- =========================
+     套娃 5
+========================= -->
+
+<div class="mzk-modal" id="nested-5">
+	<div class="mzk-box small">
+		<span class="mzk-close">&times;</span>
+
+		<h2>好吧你赢了</h2>
+
+		<p>这是最后的秘密。</p>
+
+		<button
+			onclick="
+				window.open(
+					'https://autopatchcn.yuanshen.com/client_app/download/launcher/20260408105501_5dtAxqBbnzysRlMJ/pcbackup319/yuanshen_setup_20260408.exe',
+				)
+			"
+		>
+			惊喜
+		</button>
+	</div>
+</div>
+
+<script is:inline>
+	function initFooterConfig() {
+		// Initialize year
+		const yearElement = document.getElementById("year");
+		if (yearElement) {
+			yearElement.textContent = new Date().getFullYear();
+		}
+
+		const overlay = document.getElementById("mzk-overlay");
+		const allModals = document.querySelectorAll(".mzk-modal");
+		const easterTrigger = document.getElementById("mzk-easter-trigger");
+
+		// Only show one modal
+		window.showOnly = (id) => {
+			allModals.forEach((modal) => {
+				modal.classList.remove("show");
+			});
+
+			if (overlay) {
+				overlay.classList.add("show");
+			}
+
+			const targetModal = document.getElementById(id);
+			if (targetModal) {
+				targetModal.classList.add("show");
+			}
+
+			document.body.style.overflow = "hidden";
+		};
+
+		// Close all modals
+		window.closeAllModals = () => {
+			allModals.forEach((modal) => {
+				modal.classList.remove("show");
+			});
+
+			if (overlay) {
+				overlay.classList.remove("show");
+			}
+
+			document.body.style.overflow = "";
+		};
+
+		// Open main modal
+		if (easterTrigger) {
+			easterTrigger.onclick = () => {
+				window.showOnly("mzk-main-modal");
+			};
+		}
+
+		// Close buttons
+		document.querySelectorAll(".mzk-close").forEach((btn) => {
+			btn.onclick = window.closeAllModals;
+		});
+
+		// Overlay click to close
+		if (overlay) {
+			overlay.onclick = window.closeAllModals;
+		}
+
+		// Luck functions
+		window.openLuck = () => {
+			window.showOnly("luck-modal");
+		};
+
+		window.generateLuck = () => {
+			const num = Math.floor(Math.random() * 101);
+
+			let text = "";
+
+			if (num >= 90) {
+				text = "欧皇降临";
+			} else if (num >= 70) {
+				text = "运气不错";
+			} else if (num >= 40) {
+				text = "一般般";
+			} else {
+				text = "今天不宜抽卡";
+			}
+
+			const luckNumberEl = document.getElementById("luck-number");
+			if (luckNumberEl) {
+				luckNumberEl.innerHTML = `${num}
+        <div style="
+          font-size:24px;
+          margin-top:10px;
+        ">
+          ${text}
+        </div>`;
+			}
+		};
+
+		// Surprise
+		window.openSurprise = () => {
+			window.showOnly("surprise-modal");
+		};
+
+		window.openVideoPage = () => {
+			window.open("/video/Never Gonna Give You Up.mp4", "_blank");
+		};
+
+		// Nested
+		window.openNothing = () => {
+			window.showOnly("nested-1");
+		};
+
+		window.openNested = (level) => {
+			window.showOnly(`nested-${level}`);
+		};
+	}
+
+	// Initialize on page load
+	if (document.readyState === "loading") {
+		document.addEventListener("DOMContentLoaded", initFooterConfig);
+	} else {
+		initFooterConfig();
+	}
+
+	// Also handle Astro page transitions
+	document.addEventListener("astro:page-load", initFooterConfig);
+</script>
+
+<style>
+	/* ===== Footer ===== */
+	footer {
+		color: #ff4da6;
+		text-align: center;
+		padding: 10px 0;
+		font-size: 14px;
+	}
+
+	footer a:hover {
+		color: #e60073;
+	}
+
+	/* ===== 触发文字 ===== */
+
+	#mzk-easter-trigger {
+		margin-top: 10px;
+		text-align: center;
+		color: #ff69b4;
+		font-size: 14px;
+		cursor: pointer;
+		transition: 0.25s;
+		user-select: none;
+		position: relative;
+		z-index: 10;
+	}
+
+	#mzk-easter-trigger:hover {
+		transform: scale(1.05);
+		opacity: 0.8;
+	}
+
+	/* ===== 全屏遮罩 ===== */
+
+	#mzk-overlay {
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 100vh;
+		background: rgba(0, 0, 0, 0.72);
+		backdrop-filter: blur(8px);
+		-webkit-backdrop-filter: blur(8px);
+		z-index: 2147483646;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.25s ease;
+	}
+
+	#mzk-overlay.show {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	/* ===== 弹窗主体 ===== */
+
+	:global(.mzk-modal) {
+		position: fixed;
+		inset: 0;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		z-index: 2147483647;
+		opacity: 0;
+		pointer-events: none;
+		transition: opacity 0.25s ease;
+		padding: 24px;
+	}
+
+	:global(.mzk-modal.show) {
+		opacity: 1;
+		pointer-events: auto;
+	}
+
+	:global(.mzk-box) {
+		width: min(920px, 92vw);
+		min-height: 520px;
+		background: #f4e3f2;
+		border-radius: 28px;
+		padding: 42px;
+		position: relative;
+		overflow: hidden;
+		box-shadow: 0 25px 80px rgba(0, 0, 0, 0.35);
+		animation: popup 0.22s ease;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+	}
+
+	/* 小弹窗 */
+
+	:global(.mzk-box.small) {
+		width: min(620px, 92vw);
+		min-height: 320px;
+		height: auto;
+	}
+
+	/* ===== 动画 ===== */
+
+	@keyframes popup {
+		from {
+			transform: scale(0.9);
+			opacity: 0;
+		}
+
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+
+	/* ===== 标题 ===== */
+
+	:global(.mzk-box h1) {
+		font-size: clamp(26px, 3vw, 44px);
+		margin-bottom: 12px;
+		line-height: 1.2;
+	}
+
+	:global(.mzk-box h2) {
+		font-size: clamp(28px, 4vw, 40px);
+		margin-bottom: 18px;
+	}
+
+	:global(.mzk-box p) {
+		font-size: 18px;
+	}
+
+	/* ===== 关闭按钮 ===== */
+
+	:global(.mzk-close) {
+		position: absolute;
+		top: 18px;
+		right: 22px;
+		font-size: 36px;
+		cursor: pointer;
+		transition: 0.2s;
+	}
+
+	:global(.mzk-close:hover) {
+		transform: rotate(90deg);
+	}
+
+	/* ===== 主按钮区域 ===== */
+
+	:global(.mzk-btn-group) {
+		margin-top: auto;
+		display: flex;
+		gap: 20px;
+		width: 100%;
+	}
+
+	/* ===== 按钮 ===== */
+
+	:global(.mzk-btn-group button),
+	:global(.mzk-box button) {
+		flex: 1;
+		min-width: 0;
+		white-space: nowrap;
+		border: none;
+		background: #e7a2eb;
+		color: white;
+		border-radius: 18px;
+		padding: 16px 20px;
+		font-size: clamp(14px, 1vw, 22px);
+		cursor: pointer;
+		transition: 0.2s;
+		font-weight: 600;
+	}
+
+	:global(.mzk-btn-group button:hover),
+	:global(.mzk-box button:hover) {
+		transform: scale(1.04);
+		opacity: 0.85;
+	}
+
+	/* ===== 人品数字 ===== */
+
+	#luck-number {
+		font-size: 72px;
+		margin: 24px 0;
+		color: hotpink;
+		text-align: center;
+	}
+
+	/* ===== 深色模式 ===== */
+
+	:global(html.dark .mzk-box) {
+		background: #2a2430;
+		color: white;
+	}
+
+	/* ===== 移动端 ===== */
+
+	@media (max-width: 768px) {
+		:global(.mzk-box) {
+			width: 94vw;
+			height: auto;
+			min-height: 360px;
+			padding: 24px;
+		}
+
+		:global(.mzk-box.small) {
+			width: 94vw;
+			min-height: 260px;
+		}
+
+		:global(.mzk-btn-group) {
+			margin-top: 40px;
+			gap: 10px;
+		}
+
+		:global(.mzk-btn-group button) {
+			min-width: 0;
+			font-size: 13px;
+			padding: 14px 8px;
+		}
+
+		:global(.mzk-box h1) {
+			font-size: 34px;
+		}
+
+		:global(.mzk-box h2) {
+			font-size: 26px;
+		}
+
+		#luck-number {
+			font-size: 54px;
+		}
+
+		#mzk-easter-trigger {
+			font-size: 15px;
+		}
+	}
+
+	:global(.mzk-modal),
+	:global(.mzk-modal *) {
+		font-family:
+			var(--global-font), var(--font-main), sans-serif !important;
+	}
+</style>
