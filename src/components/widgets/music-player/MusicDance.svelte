@@ -15,6 +15,7 @@
 
 		// 动画目标：尽量选择页面组件，而非每个文字节点
 		selector: [
+			// 页面主要区域
 			"header",
 			"main",
 			"footer",
@@ -22,10 +23,21 @@
 			"section",
 			"article",
 			"aside",
+
+			// 左侧栏和右侧栏的外层及内部组件
+			"#sidebar",
+			"#sidebar-sticky",
+			"#sidebar .sidebar-content > *",
+			"#sidebar-sticky .sidebar-content > *",
+			"#right-sidebar",
+			"#right-sidebar-sticky",
+			"#right-sidebar .sidebar-content > *",
+			"#right-sidebar-sticky .sidebar-content > *",
+
+			// 其他卡片
 			".card",
 			".widget",
 			".post-card",
-			".sidebar",
 			".card-grid",
 		].join(","),
 	};
