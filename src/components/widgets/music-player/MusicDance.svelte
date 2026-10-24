@@ -6,19 +6,19 @@
 		musicUrl: "/music/dance.mp3", // 音乐文件路径
 		// 悬浮视频配置
 		videoSrc: "/video/dance.mp4", // 视频路径
-		videoWidth: 240, // 视频宽度（px）
-		videoHeight: 135, // 视频高度（px）
-		videoSpeed: 35, // 移动速度（px/s）
-		videoOpacity: 0.9, // 透明度（0～1）
+		videoWidth: 720, // 视频宽度（px）
+		videoHeight: 405, // 视频高度（px）
+		videoSpeed: 500, // 移动速度（px/s）
+		videoOpacity: 0.8, // 透明度（0～1）
 		videoEdgePadding: 8, // 距离窗口边缘的间距（px）
 		videoZIndex: 9999, // 悬浮层级
 		videoTurnAngle: 55, // 碰边时随机偏转角度（度）
 
-		flipDuration: 300, // 左右翻转运动时间，毫秒
-		flipGap: 300, // 翻转停顿时间，毫秒
+		flipDuration: 500, // 左右翻转运动时间，毫秒
+		flipGap: 500, // 翻转停顿时间，毫秒
 
-		stretchDuration: 300, // 上下拉伸运动时间，毫秒
-		stretchGap: 300, // 拉伸停顿时间，毫秒
+		stretchDuration: 500, // 上下拉伸运动时间，毫秒
+		stretchGap: 500, // 拉伸停顿时间，毫秒
 
 		stretchMax: 1.25, // 最大拉伸倍率
 
@@ -35,9 +35,9 @@
 
 			// 左侧栏和右侧栏的外层及内部组件
 			"#sidebar",
-			"#sidebar-sticky",
+			"#left-sidebar-sticky",
 			"#sidebar .sidebar-content > *",
-			"#sidebar-sticky .sidebar-content > *",
+			"#left-sidebar-sticky .sidebar-content > *",
 			"#right-sidebar",
 			"#right-sidebar-sticky",
 			"#right-sidebar .sidebar-content > *",
@@ -142,21 +142,143 @@
 
 		originalStyles.clear();
 	}
-	function resizeFloatingVideo() {
+	// 将视频坐标限制在视口内，并应用到 fixed 视频元素。
+	function setVideoPosition() {
 		if (!video) return;
+		video.style.left = `${videoX}px`;
+		video.style.top = `${videoY}px`;
+	}
 
-		const padding = CONFIG.videoEdgePadding;
+	function randomizeVideoVelocity() {
+		const angle = Math.random() * Math.PI * 2;
+		const speed = Math.max(1, CONFIG.videoSpeed);
+		velocityX = Math.cos(angle) * speed;
+		velocityY = Math.sin(angle) * speed;
+	}
+
+	// 每帧移动视频；触碰窗口边缘时反弹，并略微随机改变方向。
+	function moveFloatingVideo(timestamp: number) {
+		if (!playing || !video) return;
+
+		if (lastFrameTime === 0) lastFrameTime = timestamp;
+		const delta = Math.min((timestamp - lastFrameTime) / 1000, 0.05);
+		lastFrameTime = timestamp;
+
+		const padding = Math.max(0, CONFIG.videoEdgePadding);
+		const videoWidth =
+			video.getBoundingClientRect().width || CONFIG.videoWidth;
+		const videoHeight =
+			video.getBoundingClientRect().height || CONFIG.videoHeight;
 		const maxX = Math.max(
 			padding,
-			window.innerWidth - CONFIG.videoWidth - padding,
+			window.innerWidth - videoWidth - padding,
 		);
 		const maxY = Math.max(
 			padding,
-			window.innerHeight - CONFIG.videoHeight - padding,
+			window.innerHeight - videoHeight - padding,
+		);
+		videoX += velocityX * delta;
+		videoY += velocityY * delta;
+
+		let hitX = false;
+		let hitY = false;
+		if (videoX <= padding) {
+			videoX = padding;
+			velocityX = Math.abs(velocityX);
+			hitX = true;
+		} else if (videoX >= maxX) {
+			videoX = maxX;
+			velocityX = -Math.abs(velocityX);
+			hitX = true;
+		}
+		if (videoY <= padding) {
+			videoY = padding;
+			velocityY = Math.abs(velocityY);
+			hitY = true;
+		} else if (videoY >= maxY) {
+			videoY = maxY;
+			velocityY = -Math.abs(velocityY);
+			hitY = true;
+		}
+
+		if (hitX || hitY) {
+			const baseAngle = Math.atan2(velocityY, velocityX);
+			const maxTurn =
+				(Math.max(0, CONFIG.videoTurnAngle) * Math.PI) / 180;
+			const angle = baseAngle + (Math.random() * 2 - 1) * maxTurn;
+			const speed = Math.max(1, CONFIG.videoSpeed);
+			velocityX = Math.cos(angle) * speed;
+			velocityY = Math.sin(angle) * speed;
+		}
+
+		setVideoPosition();
+		videoFrame = requestAnimationFrame(moveFloatingVideo);
+	}
+
+	function startFloatingVideo() {
+		if (!video) return;
+		cancelAnimationFrame(videoFrame);
+		const padding = Math.max(0, CONFIG.videoEdgePadding);
+		const videoWidth =
+			video.getBoundingClientRect().width || CONFIG.videoWidth;
+		const videoHeight =
+			video.getBoundingClientRect().height || CONFIG.videoHeight;
+		const maxX = Math.max(
+			padding,
+			window.innerWidth - videoWidth - padding,
+		);
+		const maxY = Math.max(
+			padding,
+			window.innerHeight - videoHeight - padding,
+		);
+		videoX = padding + Math.random() * Math.max(0, maxX - padding);
+		videoY = padding + Math.random() * Math.max(0, maxY - padding);
+		randomizeVideoVelocity();
+		lastFrameTime = 0;
+		setVideoPosition();
+		videoFrame = requestAnimationFrame(moveFloatingVideo);
+	}
+
+	function stopFloatingVideo() {
+		cancelAnimationFrame(videoFrame);
+		videoFrame = 0;
+		lastFrameTime = 0;
+		if (video) video.pause();
+	}
+
+	function resizeFloatingVideo() {
+		if (!video) return;
+
+		const padding = Math.max(0, CONFIG.videoEdgePadding);
+		// 窄窗口下按原始宽高比缩小视频，确保整个视频始终留在视口内。
+		const scale = Math.min(
+			1,
+			Math.max(
+				0.1,
+				(window.innerWidth - padding * 2) / CONFIG.videoWidth,
+			),
+			Math.max(
+				0.1,
+				(window.innerHeight - padding * 2) / CONFIG.videoHeight,
+			),
+		);
+		video.style.width = `${CONFIG.videoWidth * scale}px`;
+		video.style.height = `${CONFIG.videoHeight * scale}px`;
+		const videoWidth =
+			video.getBoundingClientRect().width || CONFIG.videoWidth;
+		const videoHeight =
+			video.getBoundingClientRect().height || CONFIG.videoHeight;
+		const maxX = Math.max(
+			padding,
+			window.innerWidth - videoWidth - padding,
+		);
+		const maxY = Math.max(
+			padding,
+			window.innerHeight - videoHeight - padding,
 		);
 
-		videoX = Math.min(videoX, maxX);
-		videoY = Math.min(videoY, maxY);
+		videoX = Math.max(padding, Math.min(videoX, maxX));
+		videoY = Math.max(padding, Math.min(videoY, maxY));
 
 		setVideoPosition();
 	}
@@ -200,6 +322,8 @@
 			});
 
 			const targets = getTargets();
+			console.log("[MusicDance] 找到动画目标数量：", targets.length);
+			console.log("[MusicDance] 动画目标：", targets);
 
 			for (const element of targets) {
 				saveOriginalStyle(element);
@@ -246,7 +370,14 @@
 
 	onMount(() => {
 		audio.src = CONFIG.musicUrl;
+
+		// 将视频提升到 body 直属子元素，避免祖先元素的 transform
+		// 把 position: fixed 的定位范围从浏览器视口改成页面区域。
+		if (video && video.parentElement !== document.body) {
+			document.body.appendChild(video);
+		}
 		video.src = CONFIG.videoSrc;
+		resizeFloatingVideo();
 
 		window.addEventListener("resize", resizeFloatingVideo);
 
@@ -262,6 +393,8 @@
 			cancelAnimationFrame(videoFrame);
 			audio.removeEventListener("ended", handleEnded);
 			window.removeEventListener("pagehide", handlePageHide);
+			// 视频被移动到了 body，组件卸载时需要显式移除，避免残留。
+			video?.remove();
 		};
 	});
 </script>
