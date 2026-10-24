@@ -4,6 +4,15 @@
 	// ==================== 可编辑配置区 ====================
 	const CONFIG = {
 		musicUrl: "/music/dance.mp3", // 音乐文件路径
+		// 悬浮视频配置
+		videoSrc: "/video/dance.mp4", // 视频路径
+		videoWidth: 240, // 视频宽度（px）
+		videoHeight: 135, // 视频高度（px）
+		videoSpeed: 35, // 移动速度（px/s）
+		videoOpacity: 0.9, // 透明度（0～1）
+		videoEdgePadding: 8, // 距离窗口边缘的间距（px）
+		videoZIndex: 9999, // 悬浮层级
+		videoTurnAngle: 55, // 碰边时随机偏转角度（度）
 
 		flipDuration: 300, // 左右翻转运动时间，毫秒
 		flipGap: 300, // 翻转停顿时间，毫秒
@@ -46,6 +55,13 @@
 	let audio: HTMLAudioElement;
 	let playing = $state(false);
 	let errorMessage = $state("");
+	let video: HTMLVideoElement;
+	let videoX = 0;
+	let videoY = 0;
+	let velocityX = 0;
+	let velocityY = 0;
+	let videoFrame = 0;
+	let lastFrameTime = 0;
 
 	let animations: Animation[] = [];
 	let generation = 0;
@@ -126,10 +142,28 @@
 
 		originalStyles.clear();
 	}
+	function resizeFloatingVideo() {
+		if (!video) return;
 
+		const padding = CONFIG.videoEdgePadding;
+		const maxX = Math.max(
+			padding,
+			window.innerWidth - CONFIG.videoWidth - padding,
+		);
+		const maxY = Math.max(
+			padding,
+			window.innerHeight - CONFIG.videoHeight - padding,
+		);
+
+		videoX = Math.min(videoX, maxX);
+		videoY = Math.min(videoY, maxY);
+
+		setVideoPosition();
+	}
 	function stopDance(resetAudio = true) {
 		generation++;
 		playing = false;
+		stopFloatingVideo();
 
 		restore();
 
@@ -158,6 +192,12 @@
 			if (currentGeneration !== generation) return;
 
 			playing = true;
+			// 启动悬浮视频
+			startFloatingVideo();
+
+			video.play().catch((error) => {
+				console.warn("[MusicDance] 视频播放失败：", error);
+			});
 
 			const targets = getTargets();
 
@@ -206,6 +246,9 @@
 
 	onMount(() => {
 		audio.src = CONFIG.musicUrl;
+		video.src = CONFIG.videoSrc;
+
+		window.addEventListener("resize", resizeFloatingVideo);
 
 		const handleEnded = () => stopDance();
 		const handlePageHide = () => stopDance();
@@ -215,6 +258,8 @@
 
 		return () => {
 			stopDance();
+			window.removeEventListener("resize", resizeFloatingVideo);
+			cancelAnimationFrame(videoFrame);
 			audio.removeEventListener("ended", handleEnded);
 			window.removeEventListener("pagehide", handlePageHide);
 		};
@@ -233,6 +278,17 @@
 	</button>
 
 	<audio bind:this={audio} preload="none"></audio>
+	<video
+		bind:this={video}
+		class="floating-dance-video"
+		class:visible={playing}
+		style={`width:${CONFIG.videoWidth}px;height:${CONFIG.videoHeight}px;opacity:${CONFIG.videoOpacity};z-index:${CONFIG.videoZIndex};`}
+		muted
+		loop
+		playsinline
+		preload="metadata"
+		aria-hidden="true"
+	></video>
 
 	{#if errorMessage}
 		<span class="dance-error" role="status">
@@ -278,5 +334,27 @@
 		margin-left: 12px;
 		color: #d44;
 		font-size: 12px;
+	}
+	.floating-dance-video {
+		position: fixed;
+		left: 8px;
+		top: 8px;
+		object-fit: contain;
+		visibility: hidden;
+		pointer-events: none;
+		border-radius: 12px;
+		box-shadow: 0 4px 20px #0004;
+		transition: opacity 0.3s ease;
+		will-change: left, top;
+	}
+
+	.floating-dance-video.visible {
+		visibility: visible;
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.floating-dance-video {
+			transition: none;
+		}
 	}
 </style>
